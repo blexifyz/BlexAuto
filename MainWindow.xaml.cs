@@ -307,15 +307,16 @@ namespace BlexAutoClicker
                 var json = reader.ReadToEnd();
                 var presets = JsonSerializer.Deserialize<List<Preset>>(json);
                 if (presets == null || presets.Count == 0) return;
+                presets.Insert(0, new Preset { Name = "-- Select a preset --", Cps = -1, Duty = -1 });
                 PresetsCombo.ItemsSource = presets;
-                PresetsCombo.SelectedIndex = -1;
+                PresetsCombo.SelectedIndex = 0;
             }
             catch { }
         }
 
         private void PresetsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PresetsCombo.SelectedItem is Preset preset)
+            if (PresetsCombo.SelectedItem is Preset preset && preset.Cps > 0)
             {
                 _updatingCps = true;
                 _updatingDuty = true;
@@ -327,7 +328,6 @@ namespace BlexAutoClicker
                 if (preset.Duty <= 100) DutySlider.Value = preset.Duty;
                 _updatingCps = false;
                 _updatingDuty = false;
-                PresetsCombo.SelectedIndex = -1;
             }
         }
 
