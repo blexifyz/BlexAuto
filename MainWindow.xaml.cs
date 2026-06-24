@@ -27,8 +27,9 @@ namespace BlexAutoClicker
         private static readonly Key MouseX2Key = (Key)0x06;
 
         private Key _startKey = Key.F6;
-        private static readonly string ConfigPath = Path.Combine(
-            Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory, "config.json");
+        private static readonly string AppDir = Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string ConfigPath = Path.Combine(AppDir, "config.json");
+        private static readonly string UserPresetsPath = Path.Combine(AppDir, "user_presets.json");
 
         [System.Reflection.Obfuscation(Exclude = true, ApplyToMembers = true)]
         private class Preset
@@ -299,28 +300,37 @@ namespace BlexAutoClicker
 
         private void LoadPresets()
         {
-            List<Preset> presets = new List<Preset>
+            // Global presets (hardcoded)
+            var global = new List<Preset>
             {
                 new Preset { Name = "Altify MS", Cps = 115.25, Duty = 54.45 }
             };
+            PresetsList.ItemsSource = global;
 
+            // User presets (from file)
+            LoadUserPresets();
+        }
+
+        private void LoadUserPresets()
+        {
             try
             {
-                var asm = System.Reflection.Assembly.GetExecutingAssembly();
-                using var stream = asm.GetManifestResourceStream("BlexAutoClicker.presets.json");
-                if (stream != null)
-                {
-                    using var reader = new StreamReader(stream);
-                    var json = reader.ReadToEnd();
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var loaded = JsonSerializer.Deserialize<List<Preset>>(json, options);
-                    if (loaded != null && loaded.Count > 0 && loaded[0].Cps > 0)
-                        presets = loaded;
-                }
+                if (!File.Exists(UserPresetsPath)) return;
+                var json = File.ReadAllText(UserPresetsPath);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var list = JsonSerializer.Deserialize<List<Preset>>(json, options);
+                UserPresetsList.ItemsSource = list ?? new List<Preset>();
             }
-            catch { }
+            catch
+            {
+                UserPresetsList.ItemsSource = new List<Preset>();
+            }
+        }
 
-            PresetsList.ItemsSource = presets;
+        private void SaveUserPresets(List<Preset> presets)
+        {
+            var json = JsonSerializer.Serialize(presets, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(UserPresetsPath, json);
         }
 
         private void PresetTile_Click(object sender, MouseButtonEventArgs e)
@@ -337,6 +347,34 @@ namespace BlexAutoClicker
                 if (preset.Duty <= 100) DutySlider.Value = preset.Duty;
                 _updatingCps = false;
                 _updatingDuty = false;
+            }
+        }
+
+        private void SavePreset_Click(object sender, RoutedEventArgs e)
+        {
+            var name = NewPresetName.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Enter a preset name.", "Save Preset", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var presets = (UserPresetsList.ItemsSource as List<Preset>) ?? new List<Preset>();
+            presets.Add(new Preset { Name = name, Cps = _engine.CPS, Duty = _engine.DutyCyclePercent });
+            SaveUserPresets(presets);
+            UserPresetsList.ItemsSource = null;
+            UserPresetsList.ItemsSource = presets;
+            NewPresetName.Clear();
+        }
+
+        private void DeletePreset_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb && tb.DataContext is Preset preset)
+            {
+                var presets = (UserPresetsList.ItemsSource as List<Preset>) ?? new List<Preset>();
+                presets.Remove(preset);
+                SaveUserPresets(presets);
+                UserPresetsList.ItemsSource = null;
+                UserPresetsList.ItemsSource = presets;
             }
         }
 
