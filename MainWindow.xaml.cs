@@ -51,6 +51,7 @@ namespace BlexAutoClicker
             {
                 _engine = ServiceLocator.GetService<ClickerEngineService>();
                 _hotkeys = ServiceLocator.GetService<HotkeyService>();
+                var ff = ServiceLocator.GetService<FastFlagService>();
 
                 _engine.StateChanged += OnStateChanged;
 
@@ -97,6 +98,7 @@ namespace BlexAutoClicker
 
                 LoadConfig();
                 UpdateUI(false);
+                LoadFastFlags();
                 ServiceLocator.GetService<UpdateService>().CheckForUpdate();
             }
             catch (Exception ex)
@@ -283,6 +285,52 @@ namespace BlexAutoClicker
         {
             _hotkeys.UnregisterAll();
             RegisterAllHotkeys();
+        }
+
+        // ─── Fast Flags ──────────────────────────────────────────────
+
+        private void LoadFastFlags()
+        {
+            var ff = ServiceLocator.GetService<FastFlagService>();
+            if (!ff.IsRobloxFound)
+            {
+                FastFlagStatus.Text = "Roblox not found on this PC";
+                return;
+            }
+            FastFlagStatus.Text = "Roblox found — changes take effect after restart";
+            int fps = ff.GetFpsUnlock();
+            FpsUnlockBox.Text = fps > 0 ? fps.ToString() : "0";
+            DisablePostFxChk.IsChecked = ff.DisablePostFx;
+            DisableShadowsChk.IsChecked = ff.DisableShadows;
+            DisableCloudsChk.IsChecked = ff.DisableClouds;
+            DisableWaterReflChk.IsChecked = ff.DisableWaterReflection;
+        }
+
+        private void FpsUnlockBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            if (int.TryParse(FpsUnlockBox.Text, out int fps) && fps >= 0 && fps <= 9999)
+                ServiceLocator.GetService<FastFlagService>().SetFpsUnlock(fps);
+        }
+
+        private void FlagToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            var ff = ServiceLocator.GetService<FastFlagService>();
+            if (sender == DisablePostFxChk) ff.DisablePostFx = true;
+            else if (sender == DisableShadowsChk) ff.DisableShadows = true;
+            else if (sender == DisableCloudsChk) ff.DisableClouds = true;
+            else if (sender == DisableWaterReflChk) ff.DisableWaterReflection = true;
+        }
+
+        private void FlagToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            var ff = ServiceLocator.GetService<FastFlagService>();
+            if (sender == DisablePostFxChk) ff.DisablePostFx = false;
+            else if (sender == DisableShadowsChk) ff.DisableShadows = false;
+            else if (sender == DisableCloudsChk) ff.DisableClouds = false;
+            else if (sender == DisableWaterReflChk) ff.DisableWaterReflection = false;
         }
 
         // ─── Helpers ─────────────────────────────────────────────────

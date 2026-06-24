@@ -12,6 +12,7 @@ namespace BlexAutoClicker
             _services[typeof(HotkeyService)] = new HotkeyService();
             _services[typeof(ClickerEngineService)] = new ClickerEngineService();
             _services[typeof(UpdateService)] = new UpdateService();
+            _services[typeof(FastFlagService)] = new FastFlagService();
         }
 
         public static T GetService<T>() where T : class
