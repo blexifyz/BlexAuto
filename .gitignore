@@ -1,0 +1,7 @@
+bin/
+obj/
+_Blex_EXE/
+*.user
+*.suo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,239 @@
+<Window x:Class="BlexAutoClicker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Blex Auto" 
+        Height="620" Width="780"
+        MinHeight="580" MinWidth="680"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        TextElement.Foreground="#F0F0F5"
+        TextElement.FontFamily="Segoe UI"
+        FontSize="13"
+        UseLayoutRounding="True"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        MouseLeftButtonDown="TitleBar_MouseDown">
+    <Window.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="#12122A"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="RadioOpt" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="Margin" Value="0,0,24,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="TextBoxCustom" TargetType="TextBox">
+            <Setter Property="Background" Value="#0A0A1A"/>
+            <Setter Property="Foreground" Value="#F0F0F5"/>
+            <Setter Property="BorderBrush" Value="#2D2D4A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CaretBrush" Value="#7C3AED"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#7C3AED"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="KeybindButton" TargetType="Button">
+            <Setter Property="Background" Value="#0A0A1A"/>
+            <Setter Property="Foreground" Value="#F0F0F5"/>
+            <Setter Property="BorderBrush" Value="#2D2D4A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#7C3AED"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="#0A0A1A" CornerRadius="10" BorderBrush="#2D2D4A" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Custom Title Bar -->
+            <Border Background="#0F0F25" CornerRadius="10,10,0,0" Padding="16,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⬡" Foreground="#7C3AED" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="BLEX AUTO" Foreground="#7C3AED" FontSize="14" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="v1.0" Foreground="#4B5563" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button x:Name="MinimizeBtn" Content="─" Background="Transparent" Foreground="#9CA3AF" 
+                                BorderThickness="0" Width="36" Height="28" FontSize="14"
+                                Cursor="Hand" Click="MinimizeBtn_Click"/>
+                        <Button x:Name="CloseBtn" Content="✕" Background="Transparent" Foreground="#9CA3AF" 
+                                BorderThickness="0" Width="36" Height="28" FontSize="14"
+                                Cursor="Hand" Click="CloseBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Main Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,12,20,16">
+                <StackPanel>
+
+                    <!-- Click Rate -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="CLICK RATE" Style="{StaticResource SectionLabel}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Slider x:Name="CpsSlider" Minimum="1" Maximum="100" IsSnapToTickEnabled="True"
+                                        Value="10" TickFrequency="1" Height="36"
+                                        ValueChanged="CpsSlider_ValueChanged"
+                                        Foreground="#7C3AED"/>
+                                <TextBox Grid.Column="1" x:Name="CpsInputBox" Text="10"
+                                         Background="#0A0A1A" Foreground="#F0F0F5"
+                                         BorderBrush="#2D2D4A" BorderThickness="1"
+                                         Padding="8,4" Width="64" Height="34" FontSize="13"
+                                         VerticalContentAlignment="Center" TextAlignment="Center"
+                                         CaretBrush="#7C3AED" Margin="12,0,0,0"
+                                         TextChanged="CpsInputBox_TextChanged"
+                                         PreviewTextInput="NumberOnly_PreviewTextInput"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Click Duty Cycle -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="CLICK DUTY CYCLE" Style="{StaticResource SectionLabel}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Slider x:Name="DutySlider" Minimum="1" Maximum="100" IsSnapToTickEnabled="True"
+                                        Value="50" TickFrequency="5" Height="36"
+                                        ValueChanged="DutySlider_ValueChanged"
+                                        Foreground="#EC4899"/>
+                                <TextBox Grid.Column="1" x:Name="DutyInputBox" Text="50"
+                                         Background="#0A0A1A" Foreground="#F0F0F5"
+                                         BorderBrush="#2D2D4A" BorderThickness="1"
+                                         Padding="8,4" Width="64" Height="34" FontSize="13"
+                                         VerticalContentAlignment="Center" TextAlignment="Center"
+                                         CaretBrush="#EC4899" Margin="12,0,0,0"
+                                         TextChanged="DutyInputBox_TextChanged"
+                                         PreviewTextInput="NumberOnly_PreviewTextInput"/>
+                            </Grid>
+                            <TextBlock Text="How long the button is held per click as % of the interval. 50% = half press, 100% = full hold." 
+                                       Foreground="#6B7280" FontSize="10" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Mouse Button + Activation -->
+                    <Border Style="{StaticResource Card}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="MOUSE BUTTON" Style="{StaticResource SectionLabel}"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <RadioButton x:Name="LeftRadio" Content="Left" Style="{StaticResource RadioOpt}" 
+                                                 GroupName="MouseBtn" IsChecked="True" Checked="MouseBtn_Checked"/>
+                                    <RadioButton x:Name="MiddleRadio" Content="Middle" Style="{StaticResource RadioOpt}" 
+                                                 GroupName="MouseBtn" Checked="MouseBtn_Checked"/>
+                                    <RadioButton x:Name="RightRadio" Content="Right" Style="{StaticResource RadioOpt}" 
+                                                 GroupName="MouseBtn" Checked="MouseBtn_Checked"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="ACTIVATION" Style="{StaticResource SectionLabel}"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <RadioButton x:Name="HoldRadio" Content="Hold" Style="{StaticResource RadioOpt}" 
+                                                 GroupName="Act" Checked="Activation_Checked"/>
+                                    <RadioButton x:Name="ToggleRadio" Content="Toggle" Style="{StaticResource RadioOpt}" 
+                                                 GroupName="Act" IsChecked="True" Checked="Activation_Checked"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Hotkeys -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="HOTKEYS" Style="{StaticResource SectionLabel}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <TextBlock Text="Toggle:" Foreground="#9CA3AF" FontSize="12" VerticalAlignment="Center"/>
+                                <Button x:Name="StartKeyBtn" Content="F6" Style="{StaticResource KeybindButton}" 
+                                        Margin="8,0,0,0" Width="80" Click="StartKeyBtn_Click"/>
+                            </StackPanel>
+                            <TextBlock x:Name="KeybindHint" Text="" Foreground="#EC4899" FontSize="11" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Status Bar -->
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border CornerRadius="20" Padding="14,6" Background="#1F2937">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="#EF4444" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="StatusLabel" Text="STOPPED" Foreground="#EF4444" 
+                                           FontSize="11" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button x:Name="ResetStatsBtn" Content="Reset Stats" 
+                                    Background="#1F2937" Foreground="#9CA3AF" BorderThickness="0"
+                                    Padding="14,6" Cursor="Hand" FontSize="11" Margin="0,0,8,0"
+                                    Click="ResetStatsBtn_Click"/>
+                            <Button Content="About" Background="Transparent" Foreground="#6B7280"
+                                    BorderThickness="0" Padding="14,6" Cursor="Hand" FontSize="11"
+                                    Click="AboutBtn_Click"/>
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Resize grip -->
+            <Border Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Width="12" Height="12" Margin="0,0,2,2" IsHitTestVisible="False">
+                <TextBlock Text="◢" Foreground="#2D2D4A" FontSize="10" />
+            </Border>
+        </Grid>
+    </Border>
+</Window>
