@@ -228,7 +228,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="10" Background="#1A1A3A" BorderBrush="#7C3AED"
+                                        <Border CornerRadius="10" Background="#1A1A3A" BorderBrush="#2D2D4A"
                                                 BorderThickness="1" Margin="0,0,8,8" Cursor="Hand"
                                                 MouseLeftButtonUp="PresetTile_Click">
                                             <Border.Style>
@@ -237,6 +237,7 @@
                                                     <Style.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter Property="Background" Value="#2D2D4A"/>
+                                                            <Setter Property="BorderBrush" Value="#7C3AED"/>
                                                             <Setter Property="Effect">
                                                                 <Setter.Value>
                                                                     <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.3" Color="#7C3AED"/>
