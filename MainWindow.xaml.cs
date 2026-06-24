@@ -30,6 +30,7 @@ namespace BlexAutoClicker
         private static readonly string ConfigPath = Path.Combine(
             Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
+        [System.Reflection.Obfuscation(Exclude = true, ApplyToMembers = true)]
         private class Preset
         {
             public string Name { get; set; } = "";
