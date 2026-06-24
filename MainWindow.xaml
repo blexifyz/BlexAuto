@@ -159,6 +159,28 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- Presets -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="PRESETS" Style="{StaticResource SectionLabel}"/>
+                            <ItemsControl x:Name="PresetsList">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Name}" Margin="0,0,8,8" Padding="12,6" Height="34"
+                                                Background="#0A0A1A" Foreground="#F0F0F5" BorderBrush="#7C3AED"
+                                                BorderThickness="1" Cursor="Hand" FontSize="12"
+                                                Click="PresetBtn_Click"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Mouse Button + Activation -->
                     <Border Style="{StaticResource Card}">
                         <Grid>

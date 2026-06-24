@@ -30,6 +30,13 @@ namespace BlexAutoClicker
         private static readonly string ConfigPath = Path.Combine(
             Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
+        private class Preset
+        {
+            public string Name { get; set; } = "";
+            public double Cps { get; set; }
+            public double Duty { get; set; }
+        }
+
         private class AppConfig
         {
             public double CPS { get; set; } = 10.0;
@@ -97,6 +104,7 @@ namespace BlexAutoClicker
                 _statsTimer.Start();
 
                 LoadConfig();
+                LoadPresets();
                 UpdateUI(false);
                 ServiceLocator.GetService<UpdateService>().CheckForUpdate();
             }
@@ -284,6 +292,41 @@ namespace BlexAutoClicker
         {
             _hotkeys.UnregisterAll();
             RegisterAllHotkeys();
+        }
+
+        // ─── Presets ─────────────────────────────────────────────────
+
+        private void LoadPresets()
+        {
+            try
+            {
+                var asm = System.Reflection.Assembly.GetExecutingAssembly();
+                using var stream = asm.GetManifestResourceStream("BlexAutoClicker.presets.json");
+                if (stream == null) return;
+                using var reader = new StreamReader(stream);
+                var json = reader.ReadToEnd();
+                var presets = JsonSerializer.Deserialize<List<Preset>>(json);
+                if (presets == null || presets.Count == 0) return;
+                PresetsList.ItemsSource = presets;
+            }
+            catch { }
+        }
+
+        private void PresetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is Preset preset)
+            {
+                _updatingCps = true;
+                _updatingDuty = true;
+                _engine.CPS = preset.Cps;
+                _engine.DutyCyclePercent = preset.Duty;
+                CpsInputBox.Text = preset.Cps.ToString("F2");
+                DutyInputBox.Text = preset.Duty.ToString("F2");
+                if (preset.Cps <= 100) CpsSlider.Value = preset.Cps;
+                if (preset.Duty <= 100) DutySlider.Value = preset.Duty;
+                _updatingCps = false;
+                _updatingDuty = false;
+            }
         }
 
         // ─── Helpers ─────────────────────────────────────────────────
