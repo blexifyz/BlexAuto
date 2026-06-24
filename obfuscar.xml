@@ -5,5 +5,7 @@
   <Module file="$(InPath)\BlexAuto.dll">
     <SkipType name="BlexAutoClicker.App" />
     <SkipType name="BlexAutoClicker.MainWindow" />
+    <SkipType name="BlexAutoClicker.MainWindow+Preset" />
+    <SkipType name="BlexAutoClicker.MainWindow+AppConfig" />
   </Module>
 </Obfuscator>

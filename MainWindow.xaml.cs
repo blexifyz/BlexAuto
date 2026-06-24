@@ -312,8 +312,9 @@ namespace BlexAutoClicker
                 {
                     using var reader = new StreamReader(stream);
                     var json = reader.ReadToEnd();
-                    var loaded = JsonSerializer.Deserialize<List<Preset>>(json);
-                    if (loaded != null && loaded.Count > 0)
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var loaded = JsonSerializer.Deserialize<List<Preset>>(json, options);
+                    if (loaded != null && loaded.Count > 0 && loaded[0].Cps > 0)
                         presets = loaded;
                 }
             }
