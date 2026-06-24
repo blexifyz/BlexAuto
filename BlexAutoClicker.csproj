@@ -7,9 +7,9 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>BlexAuto</AssemblyName>
     <RootNamespace>BlexAutoClicker</RootNamespace>
-    <Version>1.2.0</Version>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
     <Authors>Blex</Authors>
     <Description>Blex Auto — Professional Auto Clicker</Description>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Blex Auto"
         Icon="pack://application:,,,/BlexAuto.ico"
-        Height="750" Width="780"
-        MinHeight="700" MinWidth="680"
+        Height="620" Width="780"
+        MinHeight="580" MinWidth="680"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         TextElement.Foreground="#F0F0F5"
@@ -69,50 +69,6 @@
                     <Setter Property="BorderBrush" Value="#7C3AED"/>
                 </Trigger>
             </Style.Triggers>
-        </Style>
-
-        <Style x:Key="ToggleSwitch" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="#D1D5DB"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="40" Height="22" CornerRadius="11" Background="#2D2D4A" BorderThickness="0">
-                                <Border x:Name="Thumb" Width="18" Height="18" CornerRadius="9" 
-                                        Background="#6B7280" HorizontalAlignment="Left" Margin="2"/>
-                            </Border>
-                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="Thumb" Storyboard.TargetProperty="Background.Color"
-                                                            To="#7C3AED" Duration="0:0:0.15"/>
-                                            <ThicknessAnimation Storyboard.TargetName="Thumb" Storyboard.TargetProperty="Margin"
-                                                                To="20,2,0,2" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="Thumb" Storyboard.TargetProperty="Background.Color"
-                                                            To="#6B7280" Duration="0:0:0.15"/>
-                                            <ThicknessAnimation Storyboard.TargetName="Thumb" Storyboard.TargetProperty="Margin"
-                                                                To="2,2,0,2" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
     </Window.Resources>
 
@@ -243,41 +199,6 @@
                                         Margin="8,0,0,0" Width="80" Click="StartKeyBtn_Click"/>
                             </StackPanel>
                             <TextBlock x:Name="KeybindHint" Text="" Foreground="#EC4899" FontSize="11" Margin="0,6,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Fast Flags -->
-                    <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="ROBLOX FAST FLAGS" Style="{StaticResource SectionLabel}"/>
-                            <TextBlock x:Name="FastFlagStatus" Text="" Foreground="#6B7280" FontSize="11" Margin="0,0,0,8"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="FPS Unlock:" Foreground="#9CA3AF" FontSize="12" VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="2" x:Name="FpsUnlockBox" Text="0"
-                                         Background="#0A0A1A" Foreground="#F0F0F5"
-                                         BorderBrush="#2D2D4A" BorderThickness="1"
-                                         Padding="8,4" Width="64" Height="30" FontSize="12"
-                                         VerticalContentAlignment="Center" TextAlignment="Center"
-                                         CaretBrush="#7C3AED" Margin="12,0,0,0"
-                                         TextChanged="FpsUnlockBox_TextChanged"/>
-                            </Grid>
-                            <CheckBox x:Name="DisablePostFxChk" Content="Disable PostFX" 
-                                      Style="{StaticResource ToggleSwitch}" Margin="0,8,0,0"
-                                      Checked="FlagToggle_Checked" Unchecked="FlagToggle_Unchecked"/>
-                            <CheckBox x:Name="DisableShadowsChk" Content="Disable Shadows" 
-                                      Style="{StaticResource ToggleSwitch}" Margin="0,6,0,0"
-                                      Checked="FlagToggle_Checked" Unchecked="FlagToggle_Unchecked"/>
-                            <CheckBox x:Name="DisableCloudsChk" Content="Disable Clouds" 
-                                      Style="{StaticResource ToggleSwitch}" Margin="0,6,0,0"
-                                      Checked="FlagToggle_Checked" Unchecked="FlagToggle_Unchecked"/>
-                            <CheckBox x:Name="DisableWaterReflChk" Content="Disable Water Reflection" 
-                                      Style="{StaticResource ToggleSwitch}" Margin="0,6,0,0"
-                                      Checked="FlagToggle_Checked" Unchecked="FlagToggle_Unchecked"/>
                         </StackPanel>
                     </Border>
 
