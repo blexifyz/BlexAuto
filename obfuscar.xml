@@ -1,0 +1,9 @@
+<?xml version='1.0'?>
+<Obfuscator>
+  <Var name="InPath" value=".\bin\Release\net8.0-windows\win-x64" />
+  <Var name="OutPath" value=".\bin\Obfuscated" />
+  <Module file="$(InPath)\BlexAuto.dll">
+    <SkipType name="BlexAutoClicker.App" />
+    <SkipType name="BlexAutoClicker.MainWindow" />
+  </Module>
+</Obfuscator>

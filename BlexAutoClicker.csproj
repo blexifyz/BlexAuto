@@ -24,4 +24,19 @@
     <Resource Include="BlexAuto.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Obfuscar" Version="2.2.39">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="Obfuscate" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+    <Exec Command="&quot;$(UserProfile)\.nuget\packages\obfuscar\2.2.39\tools\Obfuscar.Console.exe&quot; &quot;$(MSBuildProjectDirectory)\obfuscar.xml&quot;" />
+    <ItemGroup>
+      <_ObfuscatedFiles Include="$(MSBuildProjectDirectory)\bin\Obfuscated\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ObfuscatedFiles)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="True" />
+  </Target>
+
 </Project>
