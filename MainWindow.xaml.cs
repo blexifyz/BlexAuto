@@ -27,7 +27,8 @@ namespace BlexAutoClicker
         private static readonly Key MouseX2Key = (Key)0x06;
 
         private Key _startKey = Key.F6;
-        private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+        private static readonly string ConfigPath = Path.Combine(
+            Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
         private class AppConfig
         {
