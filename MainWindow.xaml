@@ -167,6 +167,22 @@
                                       Background="#0A0A1A" Foreground="#F0F0F5" BorderBrush="#2D2D4A"
                                       FontSize="13" Cursor="Hand"
                                       SelectionChanged="PresetsCombo_SelectionChanged">
+                                <ComboBox.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0A0A1A"/>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#F0F0F5"/>
+                                    <Style TargetType="ComboBoxItem">
+                                        <Setter Property="Background" Value="#0A0A1A"/>
+                                        <Setter Property="Foreground" Value="#F0F0F5"/>
+                                        <Setter Property="BorderBrush" Value="#2D2D4A"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsHighlighted" Value="True">
+                                                <Setter Property="Background" Value="#7C3AED"/>
+                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Resources>
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}" Foreground="#F0F0F5"/>
