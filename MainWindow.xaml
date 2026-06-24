@@ -163,32 +163,32 @@
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
                             <TextBlock Text="PRESETS" Style="{StaticResource SectionLabel}"/>
-                            <ComboBox x:Name="PresetsCombo" Width="220" Height="34" HorizontalAlignment="Left"
-                                      Background="#0A0A1A" Foreground="#F0F0F5" BorderBrush="#2D2D4A"
-                                      FontSize="13" Cursor="Hand"
-                                      SelectionChanged="PresetsCombo_SelectionChanged">
-                                <ComboBox.Resources>
-                                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0A0A1A"/>
-                                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#F0F0F5"/>
-                                    <Style TargetType="ComboBoxItem">
-                                        <Setter Property="Background" Value="#0A0A1A"/>
-                                        <Setter Property="Foreground" Value="#F0F0F5"/>
-                                        <Setter Property="BorderBrush" Value="#2D2D4A"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsHighlighted" Value="True">
-                                                <Setter Property="Background" Value="#7C3AED"/>
-                                                <Setter Property="Foreground" Value="#FFFFFF"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ComboBox.Resources>
-                                <ComboBox.ItemTemplate>
+                            <ItemsControl x:Name="PresetsList">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Name}" Foreground="#F0F0F5"/>
+                                        <Border CornerRadius="10" Background="#1A1A3A" BorderBrush="#7C3AED"
+                                                BorderThickness="1" Margin="0,0,8,8" Cursor="Hand"
+                                                MouseLeftButtonUp="PresetTile_Click">
+                                            <StackPanel Orientation="Horizontal" Margin="12,8">
+                                                <TextBlock Text="{Binding Name}" Foreground="#F0F0F5"
+                                                           FontSize="12" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Cps, StringFormat='  {0:F2} CPS'}"
+                                                           Foreground="#9CA3AF" FontSize="10"
+                                                           VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Duty, StringFormat=' / {0:F2}% CDC'}"
+                                                           Foreground="#9CA3AF" FontSize="10"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
                                     </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
 

@@ -298,25 +298,32 @@ namespace BlexAutoClicker
 
         private void LoadPresets()
         {
+            List<Preset> presets = new List<Preset>
+            {
+                new Preset { Name = "Altify MS", Cps = 115.25, Duty = 54.45 }
+            };
+
             try
             {
                 var asm = System.Reflection.Assembly.GetExecutingAssembly();
                 using var stream = asm.GetManifestResourceStream("BlexAutoClicker.presets.json");
-                if (stream == null) return;
-                using var reader = new StreamReader(stream);
-                var json = reader.ReadToEnd();
-                var presets = JsonSerializer.Deserialize<List<Preset>>(json);
-                if (presets == null || presets.Count == 0) return;
-                presets.Insert(0, new Preset { Name = "-- Select a preset --", Cps = -1, Duty = -1 });
-                PresetsCombo.ItemsSource = presets;
-                PresetsCombo.SelectedIndex = 0;
+                if (stream != null)
+                {
+                    using var reader = new StreamReader(stream);
+                    var json = reader.ReadToEnd();
+                    var loaded = JsonSerializer.Deserialize<List<Preset>>(json);
+                    if (loaded != null && loaded.Count > 0)
+                        presets = loaded;
+                }
             }
             catch { }
+
+            PresetsList.ItemsSource = presets;
         }
 
-        private void PresetsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PresetTile_Click(object sender, MouseButtonEventArgs e)
         {
-            if (PresetsCombo.SelectedItem is Preset preset && preset.Cps > 0)
+            if (sender is Border border && border.DataContext is Preset preset)
             {
                 _updatingCps = true;
                 _updatingDuty = true;
