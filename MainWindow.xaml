@@ -243,6 +243,15 @@
                                                                 </Setter.Value>
                                                             </Setter>
                                                         </Trigger>
+                                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                            <Setter Property="Background" Value="#7C3AED"/>
+                                                            <Setter Property="BorderBrush" Value="#A855F7"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.4" Color="#7C3AED"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
@@ -272,6 +281,15 @@
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter Property="BorderBrush" Value="#7C3AED"/>
                                                         </Trigger>
+                                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                            <Setter Property="Background" Value="#7C3AED"/>
+                                                            <Setter Property="BorderBrush" Value="#A855F7"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.4" Color="#7C3AED"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
