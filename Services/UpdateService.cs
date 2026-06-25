@@ -101,26 +101,29 @@ namespace BlexAutoClicker.Services
                 // Copy downloaded exe next to current exe
                 File.Copy(newExePath, newLocalExe, true);
 
-                // Write a bat file with logging (every step logged to update.log)
+                // Write a minimal bat file — no logging/redirects that could interfere
                 File.WriteAllText(updaterPath,
                     $"@echo off\r\n" +
-                    $"echo [%date% %time%] Updater started >> \"{logFile}\"\r\n" +
-                    $"echo CurrentExe={currentExe} >> \"{logFile}\"\r\n" +
-                    $"echo OldExe={oldExe} >> \"{logFile}\"\r\n" +
-                    $"echo NewExe={newLocalExe} >> \"{logFile}\"\r\n" +
                     $"ping -n 3 127.0.0.1 > nul\r\n" +
-                    $"echo [%date% %time%] Renaming running exe to .old... >> \"{logFile}\"\r\n" +
-                    $"ren \"{currentExe}\" \"{oldName}\" >> \"{logFile}\" 2>&1\r\n" +
-                    $"echo [%date% %time%] Renaming .new to exe... >> \"{logFile}\"\r\n" +
-                    $"ren \"{newLocalExe}\" \"BlexAuto.exe\" >> \"{logFile}\" 2>&1\r\n" +
-                    $"echo [%date% %time%] Starting new exe... >> \"{logFile}\"\r\n" +
-                    $"start \"\" \"{currentExe}\" >> \"{logFile}\" 2>&1\r\n" +
-                    $"echo [%date% %time%] Cleaning up old exe... >> \"{logFile}\"\r\n" +
+                    $":: remove stale .old from prior failed updates\r\n" +
+                    $"if exist \"{oldExe}\" del \"{oldExe}\"\r\n" +
+                    $":: rename running exe -> .old (frees the original name)\r\n" +
+                    $"ren \"{currentExe}\" \"{oldName}\"\r\n" +
+                    $":: if rename failed, wait and retry once\r\n" +
+                    $"if exist \"{currentExe}\" (\r\n" +
+                    $"    ping -n 3 127.0.0.1 > nul\r\n" +
+                    $"    if exist \"{oldExe}\" del \"{oldExe}\"\r\n" +
+                    $"    ren \"{currentExe}\" \"{oldName}\"\r\n" +
+                    $")\r\n" +
+                    $":: rename .new to original name\r\n" +
+                    $"ren \"{newLocalExe}\" \"BlexAuto.exe\"\r\n" +
+                    $":: start new version\r\n" +
+                    $"start \"\" \"{currentExe}\"\r\n" +
+                    $":: clean up .old\r\n" +
                     $":wait\r\n" +
                     $"ping -n 2 127.0.0.1 > nul\r\n" +
-                    $"del \"{oldExe}\" >> \"{logFile}\" 2>&1\r\n" +
-                    $"if exist \"{oldExe}\" (echo Old exe still locked, retrying... >> \"{logFile}\" & goto wait)\r\n" +
-                    $"echo [%date% %time%] Done, deleting self >> \"{logFile}\"\r\n" +
+                    $"del \"{oldExe}\" > nul 2>&1\r\n" +
+                    $"if exist \"{oldExe}\" goto wait\r\n" +
                     $"del \"%~f0\"\r\n");
 
                 var psi = new ProcessStartInfo
