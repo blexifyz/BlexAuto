@@ -18,7 +18,7 @@ namespace BlexAutoClicker
         private HwndSource? _hwndSource;
         private System.Timers.Timer? _statsTimer;
         private bool _awaitingBind;
-        private Action<Key>? _bindCallback;
+        private System.Action<Key, ModifierKeys>? _bindCallback;
         private bool _updatingCps;
         private bool _updatingDuty;
         private bool _prevStartBtnState;
@@ -28,6 +28,7 @@ namespace BlexAutoClicker
         private static readonly Key MouseX2Key = (Key)0x06;
 
         private Key _startKey = Key.F6;
+        private ModifierKeys _startKeyModifiers = ModifierKeys.None;
         private static readonly string AppDir = Path.GetDirectoryName(Environment.ProcessPath) ?? AppDomain.CurrentDomain.BaseDirectory;
         private static readonly string ConfigPath = Path.Combine(AppDir, "config.json");
         private static readonly string UserPresetsPath = Path.Combine(AppDir, "user_presets.json");
@@ -56,6 +57,7 @@ namespace BlexAutoClicker
             public string MouseButton { get; set; } = "Left";
             public string ActivationMode { get; set; } = "Toggle";
             public int StartKeyVk { get; set; } = 0x75; // F6
+            public int StartKeyModifiers { get; set; } = 0;
         }
 
         public MainWindow()
@@ -130,7 +132,8 @@ namespace BlexAutoClicker
                     else if (_engine.ActivationMode == "Hold")
                     {
                         int startVk = KeyToVk(_startKey);
-                        bool down = _hotkeys.IsKeyDown(startVk);
+                        bool modsHeld = ModifiersMatch(_startKeyModifiers);
+                        bool down = modsHeld && _hotkeys.IsKeyDown(startVk);
                         if (down && !_prevStartBtnState)
                         {
                             if (!_engine.IsRunning) _engine.Start();
@@ -165,13 +168,19 @@ namespace BlexAutoClicker
         private void RegisterAllHotkeys()
         {
             if (_engine.ActivationMode != "Hold")
-                _hotkeys.RegisterHotkey(_startKey, ModifierKeys.None, ToggleClicker);
+                _hotkeys.RegisterHotkey(_startKey, _startKeyModifiers, ToggleClicker);
         }
 
         private void OnRawKeyDown(int vkCode)
         {
             if (_awaitingBind)
             {
+                // Skip modifier-only presses — we check their state when a real key is pressed
+                // General VKs: Shift(0x10), Ctrl(0x11), Alt(0x12), Win(0x5B/0x5C)
+                // Left/Right variants: LShift(0xA0), RShift(0xA1), LCtrl(0xA2), RCtrl(0xA3), LAlt(0xA4), RAlt(0xA5)
+                if (vkCode is 0x10 or 0x11 or 0x12 or 0x5B or 0x5C or 0xA0 or 0xA1 or 0xA2 or 0xA3 or 0xA4 or 0xA5)
+                    return;
+
                 Key mappedKey = VkToKey(vkCode);
                 Dispatcher.Invoke(() => CompleteBind(mappedKey));
             }
@@ -185,13 +194,27 @@ namespace BlexAutoClicker
             _ => KeyInterop.KeyFromVirtualKey(vk)
         };
 
-        private static string KeyDisplayName(Key key)
+        private bool ModifiersMatch(ModifierKeys required)
         {
-            if (key == MouseX1Key) return "X1";
-            if (key == MouseX2Key) return "X2";
-            if (key == MouseMiddleKey) return "MButton";
-            if (key == Key.Escape) return "Esc";
-            return key.ToString();
+            bool shift = _hotkeys.IsKeyDown(0x10);
+            bool ctrl = _hotkeys.IsKeyDown(0x11);
+            bool alt = _hotkeys.IsKeyDown(0x12);
+            return ((required & ModifierKeys.Shift) != 0) == shift
+                && ((required & ModifierKeys.Control) != 0) == ctrl
+                && ((required & ModifierKeys.Alt) != 0) == alt;
+        }
+
+        private static string KeyDisplayName(Key key, ModifierKeys mods)
+        {
+            string prefix = "";
+            if ((mods & ModifierKeys.Control) != 0) prefix += "Ctrl + ";
+            if ((mods & ModifierKeys.Shift) != 0) prefix += "Shift + ";
+            if ((mods & ModifierKeys.Alt) != 0) prefix += "Alt + ";
+            if (key == MouseX1Key) return prefix + "X1";
+            if (key == MouseX2Key) return prefix + "X2";
+            if (key == MouseMiddleKey) return prefix + "MButton";
+            if (key == Key.Escape) return prefix + "Esc";
+            return prefix + key.ToString();
         }
 
         private static int KeyToVk(Key key)
@@ -314,7 +337,7 @@ namespace BlexAutoClicker
         // ─── Keybind rebinding ───────────────────────────────────────
 
         private void StartKeyBtn_Click(object sender, RoutedEventArgs e) =>
-            BeginBind(key => { _startKey = key; StartKeyBtn.Content = KeyDisplayName(key); SyncHoldStartState(); RebindHotkey(); });
+            BeginBind((key, mods) => { _startKey = key; _startKeyModifiers = mods; StartKeyBtn.Content = KeyDisplayName(key, mods); SyncHoldStartState(); RebindHotkey(); });
 
         private void SyncHoldStartState()
         {
@@ -322,7 +345,7 @@ namespace BlexAutoClicker
             _prevStartBtnState = _hotkeys.IsKeyDown(vk);
         }
 
-        private void BeginBind(Action<Key> callback)
+        private void BeginBind(System.Action<Key, ModifierKeys> callback)
         {
             _awaitingBind = true;
             _bindCallback = callback;
@@ -335,7 +358,14 @@ namespace BlexAutoClicker
             if (!_awaitingBind || _bindCallback == null) return;
             _awaitingBind = false;
             _hotkeys.UninstallKeyboardHook();
-            _bindCallback(key);
+
+            // Detect modifier keys held at the time of the press
+            var mods = ModifierKeys.None;
+            if (_hotkeys.IsKeyDown(0x10)) mods |= ModifierKeys.Shift;
+            if (_hotkeys.IsKeyDown(0x11)) mods |= ModifierKeys.Control;
+            if (_hotkeys.IsKeyDown(0x12)) mods |= ModifierKeys.Alt;
+
+            _bindCallback(key, mods);
             _bindCallback = null;
             KeybindHint.Text = "";
         }
@@ -503,7 +533,8 @@ namespace BlexAutoClicker
                 HoldRadio.IsChecked = cfg.ActivationMode == "Hold";
 
                 _startKey = VkToKey(cfg.StartKeyVk);
-                StartKeyBtn.Content = KeyDisplayName(_startKey);
+                _startKeyModifiers = (ModifierKeys)cfg.StartKeyModifiers;
+                StartKeyBtn.Content = KeyDisplayName(_startKey, _startKeyModifiers);
 
                 RebindHotkey();
             }
@@ -520,7 +551,8 @@ namespace BlexAutoClicker
                     DutyCyclePercent = _engine.DutyCyclePercent,
                     MouseButton = _engine.MouseButton,
                     ActivationMode = _engine.ActivationMode,
-                    StartKeyVk = KeyToVk(_startKey)
+                    StartKeyVk = KeyToVk(_startKey),
+                    StartKeyModifiers = (int)_startKeyModifiers
                 };
                 var json = JsonSerializer.Serialize(cfg, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(ConfigPath, json);

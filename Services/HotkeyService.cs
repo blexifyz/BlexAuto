@@ -77,14 +77,11 @@ namespace BlexAutoClicker.Services
             UnregisterHotkey(key);
             int id = _nextId++;
             int vk = KeyInterop.VirtualKeyFromKey(key);
-            uint mod = modifiers switch
-            {
-                ModifierKeys.Control => 0x0002,
-                ModifierKeys.Shift => 0x0004,
-                ModifierKeys.Alt => 0x0001,
-                ModifierKeys.Windows => 0x0008,
-                _ => 0x0000
-            };
+            uint mod = 0;
+            if ((modifiers & ModifierKeys.Alt) != 0) mod |= 0x0001;
+            if ((modifiers & ModifierKeys.Control) != 0) mod |= 0x0002;
+            if ((modifiers & ModifierKeys.Shift) != 0) mod |= 0x0004;
+            if ((modifiers & ModifierKeys.Windows) != 0) mod |= 0x0008;
 
             if (vk >= 0x04 && vk <= 0x06)
             {
