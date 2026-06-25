@@ -116,9 +116,9 @@
             <Setter Property="BorderBrush" Value="#22224A"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="Width" Value="64"/>
+            <Setter Property="Width" Value="84"/>
             <Setter Property="Height" Value="34"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="CaretBrush" Value="#8B5CF6"/>
