@@ -91,26 +91,36 @@ namespace BlexAutoClicker.Services
 
                 string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BlexAuto.exe");
                 string currentDir = Path.GetDirectoryName(currentExe) ?? ".";
-                string oldExe = Path.Combine(currentDir, "BlexAuto.old.exe");
-                string newLocalExe = Path.Combine(currentDir, "BlexAuto.new.exe");
+                string oldName = "BlexAuto.old.exe";
+                string newName = "BlexAuto.new.exe";
+                string oldExe = Path.Combine(currentDir, oldName);
+                string newLocalExe = Path.Combine(currentDir, newName);
+                string logFile = Path.Combine(currentDir, "update.log");
                 string updaterPath = Path.Combine(currentDir, "updater.bat");
 
                 // Copy downloaded exe next to current exe
                 File.Copy(newExePath, newLocalExe, true);
 
+                // Write a bat file with logging (every step logged to update.log)
                 File.WriteAllText(updaterPath,
                     $"@echo off\r\n" +
-                    $":: rename running exe to .old (works on Windows)\r\n" +
-                    $"move /y \"{currentExe}\" \"{oldExe}\" > nul 2>&1\r\n" +
-                    $":: rename new exe to current name\r\n" +
-                    $"move /y \"{newLocalExe}\" \"{currentExe}\" > nul 2>&1\r\n" +
-                    $":: launch the new version\r\n" +
-                    $"start \"\" \"{currentExe}\"\r\n" +
-                    $":: wait for old process to exit, then clean up\r\n" +
+                    $"echo [%date% %time%] Updater started >> \"{logFile}\"\r\n" +
+                    $"echo CurrentExe={currentExe} >> \"{logFile}\"\r\n" +
+                    $"echo OldExe={oldExe} >> \"{logFile}\"\r\n" +
+                    $"echo NewExe={newLocalExe} >> \"{logFile}\"\r\n" +
+                    $"ping -n 3 127.0.0.1 > nul\r\n" +
+                    $"echo [%date% %time%] Renaming running exe to .old... >> \"{logFile}\"\r\n" +
+                    $"ren \"{currentExe}\" \"{oldName}\" >> \"{logFile}\" 2>&1\r\n" +
+                    $"echo [%date% %time%] Renaming .new to exe... >> \"{logFile}\"\r\n" +
+                    $"ren \"{newLocalExe}\" \"BlexAuto.exe\" >> \"{logFile}\" 2>&1\r\n" +
+                    $"echo [%date% %time%] Starting new exe... >> \"{logFile}\"\r\n" +
+                    $"start \"\" \"{currentExe}\" >> \"{logFile}\" 2>&1\r\n" +
+                    $"echo [%date% %time%] Cleaning up old exe... >> \"{logFile}\"\r\n" +
                     $":wait\r\n" +
-                    $"ping 127.0.0.1 -n 2 > nul\r\n" +
-                    $"del \"{oldExe}\" > nul 2>&1\r\n" +
-                    $"if exist \"{oldExe}\" goto wait\r\n" +
+                    $"ping -n 2 127.0.0.1 > nul\r\n" +
+                    $"del \"{oldExe}\" >> \"{logFile}\" 2>&1\r\n" +
+                    $"if exist \"{oldExe}\" (echo Old exe still locked, retrying... >> \"{logFile}\" & goto wait)\r\n" +
+                    $"echo [%date% %time%] Done, deleting self >> \"{logFile}\"\r\n" +
                     $"del \"%~f0\"\r\n");
 
                 var psi = new ProcessStartInfo
