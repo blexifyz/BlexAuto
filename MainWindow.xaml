@@ -73,8 +73,10 @@
         <Style x:Key="SliderCustom" TargetType="Slider">
             <Setter Property="Minimum" Value="1"/>
             <Setter Property="Maximum" Value="100"/>
-            <Setter Property="IsSnapToTickEnabled" Value="True"/>
-            <Setter Property="TickFrequency" Value="1"/>
+            <Setter Property="IsSnapToTickEnabled" Value="False"/>
+            <Setter Property="TickFrequency" Value="0.1"/>
+            <Setter Property="SmallChange" Value="0.5"/>
+            <Setter Property="LargeChange" Value="5"/>
             <Setter Property="Height" Value="36"/>
             <Setter Property="Template">
                 <Setter.Value>
