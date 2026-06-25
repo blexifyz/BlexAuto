@@ -116,6 +116,9 @@ namespace BlexAutoClicker
 
                 LoadConfig();
                 LoadPresets();
+                var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                VersionText.Text = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v?";
+
                 UpdateUI(false);
                 ServiceLocator.GetService<UpdateService>().CheckForUpdate();
             }
@@ -318,7 +321,8 @@ namespace BlexAutoClicker
             {
                 new Preset { Name = "Altify MS", Cps = 115.25, Duty = 54.45 },
                 new Preset { Name = "Yikeswave MS", Cps = 135.00, Duty = 23.61 },
-                new Preset { Name = "Wal MS", Cps = 115.25, Duty = 42.55 }
+                new Preset { Name = "Wal MS", Cps = 115.25, Duty = 42.55 },
+                new Preset { Name = "Mahad MS", Cps = 135.00, Duty = 23.61 }
             };
             PresetsList.ItemsSource = global;
 

@@ -290,7 +290,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⬡" Foreground="#8B5CF6" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
                         <TextBlock Text="BLEX AUTO" Foreground="{StaticResource AccentGradient}" FontSize="16" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="v1.1" Foreground="#4B5563" FontSize="10" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="VersionText" Foreground="#4B5563" FontSize="10" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Button x:Name="MinimizeBtn" Content="─" Background="Transparent" Foreground="#6B7280" 
