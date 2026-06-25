@@ -90,12 +90,17 @@ namespace BlexAutoClicker.Services
                 }
 
                 string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BlexAuto.exe");
-                string updaterPath = Path.Combine(tempDir, "updater.bat");
+                string currentDir = Path.GetDirectoryName(currentExe) ?? ".";
+                string updaterPath = Path.Combine(currentDir, "updater.bat");
 
                 File.WriteAllText(updaterPath,
                     $"@echo off\r\n" +
-                    $"timeout /t 1 /nobreak > nul\r\n" +
-                    $"copy /y \"{newExePath}\" \"{currentExe}\" > nul\r\n" +
+                    $":retry\r\n" +
+                    $"move /y \"{newExePath}\" \"{currentExe}\" > nul 2>&1\r\n" +
+                    $"if errorlevel 1 (\r\n" +
+                    $"    ping 127.0.0.1 -n 2 > nul\r\n" +
+                    $"    goto retry\r\n" +
+                    $")\r\n" +
                     $"start \"\" \"{currentExe}\"\r\n" +
                     $"del \"%~f0\"\r\n");
 
