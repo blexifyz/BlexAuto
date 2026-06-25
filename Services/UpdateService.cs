@@ -12,7 +12,7 @@ namespace BlexAutoClicker.Services
     {
         private static readonly string RepoOwner = "blexifyz";
         private static readonly string RepoName = "BlexAuto";
-        private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(15) };
+        private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(120) };
 
         public async void CheckForUpdate()
         {
