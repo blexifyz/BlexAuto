@@ -124,18 +124,18 @@ namespace BlexAutoClicker
                         RefreshStats();
                         if (_awaitingBind)
                         {
-                            int vk = _hotkeys.PollMouseButtonPress();
+                            int vk = _hotkeys?.PollMouseButtonPress() ?? 0;
                             if (vk > 0)
                             {
                                 Key mappedKey = VkToKey(vk);
                                 CompleteBind(mappedKey);
                             }
                         }
-                        else if (_engine.ActivationMode == "Hold")
+                        else if (_engine?.ActivationMode == "Hold")
                         {
                             int startVk = KeyToVk(_startKey);
                             bool modsHeld = ModifiersMatch(_startKeyModifiers);
-                            bool down = modsHeld && _hotkeys.IsKeyDown(startVk);
+                            bool down = modsHeld && (_hotkeys?.IsKeyDown(startVk) ?? false);
                             if (down && !_prevStartBtnState)
                             {
                                 if (!_engine.IsRunning) _engine.Start();
@@ -148,7 +148,7 @@ namespace BlexAutoClicker
                         }
                         else
                         {
-                            _hotkeys.CheckMouseHotkeys();
+                            _hotkeys?.CheckMouseHotkeys();
                         }
                     }
                     catch (Exception ex)
@@ -203,6 +203,7 @@ namespace BlexAutoClicker
 
         private bool ModifiersMatch(ModifierKeys required)
         {
+            if (_hotkeys == null) return false;
             bool shift = _hotkeys.IsKeyDown(0x10);
             bool ctrl = _hotkeys.IsKeyDown(0x11);
             bool alt = _hotkeys.IsKeyDown(0x12);
@@ -234,23 +235,35 @@ namespace BlexAutoClicker
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == HotkeyService.WM_HOTKEY)
-                handled = _hotkeys.HandleHotkeyMessage(wParam.ToInt32());
+            try
+            {
+                if (msg == HotkeyService.WM_HOTKEY)
+                    handled = _hotkeys.HandleHotkeyMessage(wParam.ToInt32());
+            }
+            catch (Exception ex)
+            {
+                try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] WndProc: {ex}\n"); } catch { }
+            }
             return IntPtr.Zero;
         }
 
         private void ToggleClicker()
         {
-            Dispatcher.Invoke(() =>
+            try
             {
+                if (_engine == null) return;
                 if (_engine.IsRunning) _engine.Stop();
                 else _engine.Start();
-            });
+            }
+            catch (Exception ex)
+            {
+                try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] ToggleClicker: {ex}\n"); } catch { }
+            }
         }
 
         private void ResetStatsBtn_Click(object sender, RoutedEventArgs e) => _engine?.ResetStats();
 
-        private void OnStateChanged(bool running) => Dispatcher.Invoke(() => UpdateUI(running));
+        private void OnStateChanged(bool running) => UpdateUI(running);
 
         private void UpdateUI(bool running)
         {
@@ -364,13 +377,13 @@ namespace BlexAutoClicker
         {
             if (!_awaitingBind || _bindCallback == null) return;
             _awaitingBind = false;
-            _hotkeys.UninstallKeyboardHook();
+            _hotkeys?.UninstallKeyboardHook();
 
             // Detect modifier keys held at the time of the press
             var mods = ModifierKeys.None;
-            if (_hotkeys.IsKeyDown(0x10)) mods |= ModifierKeys.Shift;
-            if (_hotkeys.IsKeyDown(0x11)) mods |= ModifierKeys.Control;
-            if (_hotkeys.IsKeyDown(0x12)) mods |= ModifierKeys.Alt;
+            if (_hotkeys?.IsKeyDown(0x10) == true) mods |= ModifierKeys.Shift;
+            if (_hotkeys?.IsKeyDown(0x11) == true) mods |= ModifierKeys.Control;
+            if (_hotkeys?.IsKeyDown(0x12) == true) mods |= ModifierKeys.Alt;
 
             _bindCallback(key, mods);
             _bindCallback = null;
