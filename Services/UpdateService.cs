@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace BlexAutoClicker.Services
@@ -115,13 +116,17 @@ namespace BlexAutoClicker.Services
 
         private class GitHubRelease
         {
+            [JsonPropertyName("tag_name")]
             public string? TagName { get; set; }
+            [JsonPropertyName("assets")]
             public List<GitHubAsset>? Assets { get; set; }
         }
 
         private class GitHubAsset
         {
+            [JsonPropertyName("name")]
             public string? Name { get; set; }
+            [JsonPropertyName("browser_download_url")]
             public string? BrowserDownloadUrl { get; set; }
         }
     }
