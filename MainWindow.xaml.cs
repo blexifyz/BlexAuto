@@ -119,34 +119,41 @@ namespace BlexAutoClicker
                 _statsTimer = new System.Timers.Timer(50);
                 _statsTimer.Elapsed += (_, _) => Dispatcher.Invoke(() =>
                 {
-                    RefreshStats();
-                    if (_awaitingBind)
+                    try
                     {
-                        int vk = _hotkeys.PollMouseButtonPress();
-                        if (vk > 0)
+                        RefreshStats();
+                        if (_awaitingBind)
                         {
-                            Key mappedKey = VkToKey(vk);
-                            CompleteBind(mappedKey);
+                            int vk = _hotkeys.PollMouseButtonPress();
+                            if (vk > 0)
+                            {
+                                Key mappedKey = VkToKey(vk);
+                                CompleteBind(mappedKey);
+                            }
+                        }
+                        else if (_engine.ActivationMode == "Hold")
+                        {
+                            int startVk = KeyToVk(_startKey);
+                            bool modsHeld = ModifiersMatch(_startKeyModifiers);
+                            bool down = modsHeld && _hotkeys.IsKeyDown(startVk);
+                            if (down && !_prevStartBtnState)
+                            {
+                                if (!_engine.IsRunning) _engine.Start();
+                            }
+                            else if (!down && _prevStartBtnState)
+                            {
+                                _engine.Stop();
+                            }
+                            _prevStartBtnState = down;
+                        }
+                        else
+                        {
+                            _hotkeys.CheckMouseHotkeys();
                         }
                     }
-                    else if (_engine.ActivationMode == "Hold")
+                    catch (Exception ex)
                     {
-                        int startVk = KeyToVk(_startKey);
-                        bool modsHeld = ModifiersMatch(_startKeyModifiers);
-                        bool down = modsHeld && _hotkeys.IsKeyDown(startVk);
-                        if (down && !_prevStartBtnState)
-                        {
-                            if (!_engine.IsRunning) _engine.Start();
-                        }
-                        else if (!down && _prevStartBtnState)
-                        {
-                            _engine.Stop();
-                        }
-                        _prevStartBtnState = down;
-                    }
-                    else
-                    {
-                        _hotkeys.CheckMouseHotkeys();
+                        try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] Timer: {ex}\n"); } catch { }
                     }
                 }, System.Windows.Threading.DispatcherPriority.Background);
                 _statsTimer.Start();
