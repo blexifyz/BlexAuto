@@ -316,7 +316,8 @@ namespace BlexAutoClicker
             // Global presets (hardcoded)
             var global = new List<Preset>
             {
-                new Preset { Name = "Altify MS", Cps = 115.25, Duty = 54.45 }
+                new Preset { Name = "Altify MS", Cps = 115.25, Duty = 54.45 },
+                new Preset { Name = "Yikeswave MS", Cps = 135.00, Duty = 23.61 }
             };
             PresetsList.ItemsSource = global;
 
