@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
@@ -66,28 +65,25 @@ namespace BlexAutoClicker.Services
                 if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
                 Directory.CreateDirectory(tempDir);
 
-                string zipPath = Path.Combine(tempDir, "update.zip");
+                string newExePath = Path.Combine(tempDir, "BlexAuto.exe");
                 var resp = await _http.GetAsync(downloadUrl);
                 resp.EnsureSuccessStatusCode();
-                    using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (var fs = new FileStream(newExePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     await resp.Content.CopyToAsync(fs);
 
-                ZipFile.ExtractToDirectory(zipPath, tempDir);
-                string exePath = Path.Combine(tempDir, "BlexAuto.exe");
-                if (!File.Exists(exePath))
+                if (!File.Exists(newExePath))
                 {
-                    MessageBox.Show("Update file not found after extraction.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Update file not found after download.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BlexAuto.exe");
                 string updaterPath = Path.Combine(tempDir, "updater.bat");
-                string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(exeDir, "BlexAuto.exe");
 
                 File.WriteAllText(updaterPath,
                     $"@echo off\r\n" +
                     $"timeout /t 1 /nobreak > nul\r\n" +
-                    $"copy /y \"{exePath}\" \"{currentExe}\" > nul\r\n" +
+                    $"copy /y \"{newExePath}\" \"{currentExe}\" > nul\r\n" +
                     $"start \"\" \"{currentExe}\"\r\n" +
                     $"del \"%~f0\"\r\n");
 
