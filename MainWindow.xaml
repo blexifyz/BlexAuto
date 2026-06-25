@@ -508,6 +508,9 @@
                             <Button Content="About" Background="Transparent" Foreground="#6B7280"
                                     BorderThickness="0" Padding="14,6" Cursor="Hand" FontSize="11"
                                     Click="AboutBtn_Click"/>
+                            <Button Content="Update" Background="Transparent" Foreground="#6B7280"
+                                    BorderThickness="0" Padding="14,6" Cursor="Hand" FontSize="11"
+                                    Click="UpdateBtn_Click"/>
                         </StackPanel>
                     </Grid>
 

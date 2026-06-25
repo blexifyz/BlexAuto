@@ -429,8 +429,13 @@ namespace BlexAutoClicker
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Blex Auto v1.1\nProfessional Auto Clicker",
+            MessageBox.Show("Blex Auto v1.2\nProfessional Auto Clicker",
                 "About", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void UpdateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ServiceLocator.GetService<UpdateService>().CheckForUpdate();
         }
 
         private void LoadConfig()

@@ -53,8 +53,19 @@ namespace BlexAutoClicker.Services
                             DownloadAndInstall(asset.BrowserDownloadUrl);
                     }
                 }
+                else
+                {
+                    MessageBox.Show($"You're up to date (v{current}).", "Blex Auto Update", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
-            catch { }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show($"Update check failed: {ex.Message}\n\nMake sure you have internet access.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Update check error: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private async void DownloadAndInstall(string downloadUrl)
