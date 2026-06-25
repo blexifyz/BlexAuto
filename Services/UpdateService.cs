@@ -91,17 +91,26 @@ namespace BlexAutoClicker.Services
 
                 string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BlexAuto.exe");
                 string currentDir = Path.GetDirectoryName(currentExe) ?? ".";
+                string oldExe = Path.Combine(currentDir, "BlexAuto.old.exe");
+                string newLocalExe = Path.Combine(currentDir, "BlexAuto.new.exe");
                 string updaterPath = Path.Combine(currentDir, "updater.bat");
+
+                // Copy downloaded exe next to current exe
+                File.Copy(newExePath, newLocalExe, true);
 
                 File.WriteAllText(updaterPath,
                     $"@echo off\r\n" +
-                    $":retry\r\n" +
-                    $"move /y \"{newExePath}\" \"{currentExe}\" > nul 2>&1\r\n" +
-                    $"if errorlevel 1 (\r\n" +
-                    $"    ping 127.0.0.1 -n 2 > nul\r\n" +
-                    $"    goto retry\r\n" +
-                    $")\r\n" +
+                    $":: rename running exe to .old (works on Windows)\r\n" +
+                    $"move /y \"{currentExe}\" \"{oldExe}\" > nul 2>&1\r\n" +
+                    $":: rename new exe to current name\r\n" +
+                    $"move /y \"{newLocalExe}\" \"{currentExe}\" > nul 2>&1\r\n" +
+                    $":: launch the new version\r\n" +
                     $"start \"\" \"{currentExe}\"\r\n" +
+                    $":: wait for old process to exit, then clean up\r\n" +
+                    $":wait\r\n" +
+                    $"ping 127.0.0.1 -n 2 > nul\r\n" +
+                    $"del \"{oldExe}\" > nul 2>&1\r\n" +
+                    $"if exist \"{oldExe}\" goto wait\r\n" +
                     $"del \"%~f0\"\r\n");
 
                 var psi = new ProcessStartInfo
