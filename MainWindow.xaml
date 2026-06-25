@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Blex Auto"
         Icon="pack://application:,,,/BlexAuto.ico"
-        Height="620" Width="780"
-        MinHeight="580" MinWidth="680"
+        Height="640" Width="800"
+        MinHeight="580" MinWidth="700"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         TextElement.Foreground="#F0F0F5"
@@ -16,48 +16,121 @@
         ResizeMode="CanResizeWithGrip"
         MouseLeftButtonDown="TitleBar_MouseDown">
     <Window.Resources>
-        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#7C3AED" Offset="0"/>
-            <GradientStop Color="#A855F7" Offset="1"/>
+        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#6D28D9" Offset="0"/>
+            <GradientStop Color="#8B5CF6" Offset="0.5"/>
+            <GradientStop Color="#A78BFA" Offset="1"/>
         </LinearGradientBrush>
-
         <LinearGradientBrush x:Key="CardBg" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#151530" Offset="0"/>
-            <GradientStop Color="#101025" Offset="1"/>
+            <GradientStop Color="#14142B" Offset="0"/>
+            <GradientStop Color="#0F0F23" Offset="1"/>
         </LinearGradientBrush>
-
         <LinearGradientBrush x:Key="InputBg" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#0D0D20" Offset="0"/>
-            <GradientStop Color="#0A0A1A" Offset="1"/>
+            <GradientStop Color="#0C0C1E" Offset="0"/>
+            <GradientStop Color="#080814" Offset="1"/>
         </LinearGradientBrush>
+        <DropShadowEffect x:Key="CardGlow" BlurRadius="24" ShadowDepth="0" Opacity="0.12" Color="#6D28D9"/>
+        <DropShadowEffect x:Key="ActiveGlow" BlurRadius="18" ShadowDepth="0" Opacity="0.35" Color="#8B5CF6"/>
 
-        <DropShadowEffect x:Key="CardGlow" BlurRadius="20" ShadowDepth="0" Opacity="0.15" Color="#7C3AED"/>
-
+        <!-- ─── Card ─── -->
         <Style x:Key="Card" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource CardBg}"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="16"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="18"/>
             <Setter Property="Margin" Value="0,0,0,12"/>
-            <Setter Property="BorderBrush" Value="#2D2D4A"/>
+            <Setter Property="BorderBrush" Value="#22224A"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Effect" Value="{StaticResource CardGlow}"/>
         </Style>
 
+        <!-- ─── Section Label ─── -->
         <Style x:Key="SectionLabel" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#6B7280"/>
-            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontSize" Value="9"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
 
+        <!-- ─── Custom Slider ─── -->
         <Style x:Key="SliderCustom" TargetType="Slider">
             <Setter Property="Minimum" Value="1"/>
             <Setter Property="Maximum" Value="100"/>
             <Setter Property="IsSnapToTickEnabled" Value="True"/>
             <Setter Property="TickFrequency" Value="1"/>
             <Setter Property="Height" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <Track x:Name="PART_Track" Grid.Row="0">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge" Background="Transparent">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border CornerRadius="4" Background="#8B5CF6" Margin="0,10,0,10"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge" Background="Transparent">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border CornerRadius="4" Background="#1E1E40" Margin="0,10,0,10"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Border Width="18" Height="18" CornerRadius="9"
+                                            Background="{StaticResource AccentGradient}"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Effect="{StaticResource ActiveGlow}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
+        <!-- ─── Custom TextBox ─── -->
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource InputBg}"/>
+            <Setter Property="Foreground" Value="#F0F0F5"/>
+            <Setter Property="BorderBrush" Value="#22224A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Width" Value="64"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="CaretBrush" Value="#8B5CF6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#8B5CF6"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#4B5563"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ─── Radio Button ─── -->
         <Style x:Key="RadioOpt" TargetType="RadioButton">
             <Setter Property="Foreground" Value="#D1D5DB"/>
             <Setter Property="Margin" Value="0,0,24,0"/>
@@ -80,20 +153,20 @@
                                 <Trigger.EnterActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.EnterActions>
                                 <Trigger.ExitActions>
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.12"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.ExitActions>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Outer" Property="Stroke" Value="#7C3AED"/>
+                                <Setter TargetName="Outer" Property="Stroke" Value="#8B5CF6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -101,32 +174,33 @@
             </Setter>
         </Style>
 
-        <Style x:Key="KeybindButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource InputBg}"/>
-            <Setter Property="Foreground" Value="#F0F0F5"/>
-            <Setter Property="BorderBrush" Value="#2D2D4A"/>
+        <!-- ─── Button ─── -->
+        <Style x:Key="BtnSecondary" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#9CA3AF"/>
+            <Setter Property="BorderBrush" Value="#22224A"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="14,6"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"
-                                Padding="{TemplateBinding Padding}" Height="{TemplateBinding Height}"
-                                Cursor="{TemplateBinding Cursor}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}"
+                                Cursor="{TemplateBinding Cursor}"
+                                SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#7C3AED"/>
                                 <Setter Property="Background" Value="#1A1A3A"/>
+                                <Setter Property="BorderBrush" Value="#8B5CF6"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#2D2D4A"/>
+                                <Setter Property="Background" Value="#22224A"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -134,23 +208,21 @@
             </Setter>
         </Style>
 
+        <!-- ─── ScrollBar ─── -->
         <Style x:Key="ScrollThumb" TargetType="Thumb">
-            <Setter Property="Background" Value="#7C3AED"/>
-            <Setter Property="Width" Value="6"/>
+            <Setter Property="Background" Value="#8B5CF6"/>
+            <Setter Property="Width" Value="5"/>
             <Setter Property="MinHeight" Value="30"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#A855F7"/>
+                    <Setter Property="Background" Value="#A78BFA"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ScrollBarLineButton" TargetType="RepeatButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#4B5563"/>
-            <Setter Property="Width" Value="6"/>
-            <Setter Property="Height" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
@@ -160,8 +232,8 @@
             </Setter>
         </Style>
         <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="#0A0A1A"/>
-            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="#080814"/>
+            <Setter Property="Width" Value="7"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
@@ -184,14 +256,15 @@
         </Style>
     </Window.Resources>
 
-    <Border Background="#0A0A1A" CornerRadius="10" BorderBrush="#2D2D4A" BorderThickness="1">
+    <Border Background="#080814" CornerRadius="12" BorderBrush="#22224A" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Background="#0F0F25" CornerRadius="10,10,0,0" Padding="16,10" BorderBrush="#1F1F3A" BorderThickness="0,0,0,1">
+            <!-- ─── Title Bar ─── -->
+            <Border Background="#0F0F25" CornerRadius="12,12,0,0" Padding="18,12" BorderBrush="#1F1F3A" BorderThickness="0,0,0,1">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -199,75 +272,59 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⬡" Foreground="#7C3AED" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
-                        <TextBlock Text="BLEX AUTO" Foreground="{StaticResource AccentGradient}" FontSize="15" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="v1.1" Foreground="#4B5563" FontSize="10" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="⬡" Foreground="#8B5CF6" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="BLEX AUTO" Foreground="{StaticResource AccentGradient}" FontSize="16" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="v1.1" Foreground="#4B5563" FontSize="10" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button x:Name="MinimizeBtn" Content="─" Background="Transparent" Foreground="#9CA3AF" 
+                        <Button x:Name="MinimizeBtn" Content="─" Background="Transparent" Foreground="#6B7280" 
                                 BorderThickness="0" Width="36" Height="28" FontSize="14"
                                 Cursor="Hand" Click="MinimizeBtn_Click"/>
-                        <Button x:Name="CloseBtn" Content="✕" Background="Transparent" Foreground="#9CA3AF" 
+                        <Button x:Name="CloseBtn" Content="✕" Background="Transparent" Foreground="#6B7280" 
                                 BorderThickness="0" Width="36" Height="28" FontSize="14"
                                 Cursor="Hand" Click="CloseBtn_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,12,20,16">
+            <!-- ─── Content ─── -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,16,24,20">
                 <StackPanel>
 
+                    <!-- ─── CPS & Duty ─── -->
                     <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="CLICK RATE" Style="{StaticResource SectionLabel}"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="CpsSlider" Style="{StaticResource SliderCustom}"
-                                        Value="10" ValueChanged="CpsSlider_ValueChanged"/>
-                                <TextBox Grid.Column="1" x:Name="CpsInputBox" Text="10"
-                                         Background="{StaticResource InputBg}" Foreground="#F0F0F5"
-                                         BorderBrush="#2D2D4A" BorderThickness="1"
-                                         Padding="8,4" Width="64" Height="34" FontSize="13"
-                                         VerticalContentAlignment="Center" TextAlignment="Center"
-                                         CaretBrush="#7C3AED" Margin="12,0,0,0"
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="CLICK RATE" Style="{StaticResource SectionLabel}"/>
+                                <Slider x:Name="CpsSlider" Style="{StaticResource SliderCustom}" Value="10"
+                                        ValueChanged="CpsSlider_ValueChanged"/>
+                                <TextBox x:Name="CpsInputBox" Style="{StaticResource InputBox}" Text="10"
+                                         CaretBrush="#8B5CF6"
                                          TextChanged="CpsInputBox_TextChanged"
                                          PreviewTextInput="NumberOnly_PreviewTextInput"/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="CLICK DUTY CYCLE" Style="{StaticResource SectionLabel}"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="DutySlider" Style="{StaticResource SliderCustom}"
-                                        Value="50" Foreground="#EC4899"
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="DUTY CYCLE" Style="{StaticResource SectionLabel}"/>
+                                <Slider x:Name="DutySlider" Style="{StaticResource SliderCustom}" Value="50"
                                         ValueChanged="DutySlider_ValueChanged"/>
-                                <TextBox Grid.Column="1" x:Name="DutyInputBox" Text="50"
-                                         Background="{StaticResource InputBg}" Foreground="#F0F0F5"
-                                         BorderBrush="#2D2D4A" BorderThickness="1"
-                                         Padding="8,4" Width="64" Height="34" FontSize="13"
-                                         VerticalContentAlignment="Center" TextAlignment="Center"
-                                         CaretBrush="#EC4899" Margin="12,0,0,0"
+                                <TextBox x:Name="DutyInputBox" Style="{StaticResource InputBox}" Text="50"
+                                         CaretBrush="#EC4899"
                                          TextChanged="DutyInputBox_TextChanged"
                                          PreviewTextInput="NumberOnly_PreviewTextInput"/>
-                            </Grid>
-                            <TextBlock Text="How long the button is held per click as % of the interval. 50% = half press, 100% = full hold." 
-                                       Foreground="#6B7280" FontSize="10" Margin="0,4,0,0"/>
-                        </StackPanel>
+                            </StackPanel>
+                        </Grid>
                     </Border>
 
+                    <!-- ─── Presets ─── -->
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
                             <TextBlock Text="PRESETS" Style="{StaticResource SectionLabel}"/>
-                            <TextBlock Text="GLOBAL" Foreground="#6B7280" FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                            <TextBlock Text="GLOBAL" Foreground="#6B7280" FontSize="9" FontWeight="Bold" Margin="0,0,0,6"/>
                             <ItemsControl x:Name="PresetsList">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -276,7 +333,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="10" Background="#1A1A3A" BorderBrush="#2D2D4A"
+                                        <Border CornerRadius="8" Background="#1A1A38" BorderBrush="#22224A"
                                                 BorderThickness="1" Margin="0,0,8,8" Cursor="Hand"
                                                 MouseLeftButtonUp="PresetTile_Click">
                                             <Border.Style>
@@ -284,34 +341,24 @@
                                                     <Setter Property="Effect" Value="{x:Null}"/>
                                                     <Style.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="#2D2D4A"/>
-                                                            <Setter Property="BorderBrush" Value="#7C3AED"/>
-                                                            <Setter Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.3" Color="#7C3AED"/>
-                                                                </Setter.Value>
-                                                            </Setter>
+                                                            <Setter Property="Background" Value="#22224A"/>
+                                                            <Setter Property="BorderBrush" Value="#8B5CF6"/>
                                                         </Trigger>
                                                         <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                            <Setter Property="Background" Value="#7C3AED"/>
-                                                            <Setter Property="BorderBrush" Value="#A855F7"/>
-                                                            <Setter Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.4" Color="#7C3AED"/>
-                                                                </Setter.Value>
-                                                            </Setter>
+                                                            <Setter Property="Background" Value="#6D28D9"/>
+                                                            <Setter Property="BorderBrush" Value="#A78BFA"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
                                             <TextBlock Text="{Binding Name}" Foreground="#F0F0F5"
                                                        FontSize="12" FontWeight="SemiBold"
-                                                       Margin="12,8" VerticalAlignment="Center"/>
+                                                       Margin="12,7" VerticalAlignment="Center"/>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <TextBlock Text="YOUR PRESETS" Foreground="#6B7280" FontSize="10" FontWeight="Bold" Margin="0,8,0,6"/>
+                            <TextBlock Text="YOUR PRESETS" Foreground="#6B7280" FontSize="9" FontWeight="Bold" Margin="0,8,0,6"/>
                             <ItemsControl x:Name="UserPresetsList">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -320,7 +367,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="10" Background="#1A1A3A" BorderBrush="#2D2D4A"
+                                        <Border CornerRadius="8" Background="#1A1A38" BorderBrush="#22224A"
                                                 BorderThickness="1" Margin="0,0,8,8" Cursor="Hand"
                                                 MouseLeftButtonUp="PresetTile_Click">
                                             <Border.Style>
@@ -328,21 +375,16 @@
                                                     <Setter Property="Effect" Value="{x:Null}"/>
                                                     <Style.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="BorderBrush" Value="#7C3AED"/>
+                                                            <Setter Property="BorderBrush" Value="#8B5CF6"/>
                                                         </Trigger>
                                                         <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                            <Setter Property="Background" Value="#7C3AED"/>
-                                                            <Setter Property="BorderBrush" Value="#A855F7"/>
-                                                            <Setter Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.4" Color="#7C3AED"/>
-                                                                </Setter.Value>
-                                                            </Setter>
+                                                            <Setter Property="Background" Value="#6D28D9"/>
+                                                            <Setter Property="BorderBrush" Value="#A78BFA"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <Grid Margin="8,6">
+                                            <Grid Margin="8,5">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="Auto"/>
@@ -359,7 +401,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <Border CornerRadius="8" Background="{StaticResource InputBg}" BorderBrush="#2D2D4A"
+                            <Border CornerRadius="8" Background="{StaticResource InputBg}" BorderBrush="#22224A"
                                     BorderThickness="1" Padding="8,5" Margin="0,4,0,0"
                                     Width="340" HorizontalAlignment="Left">
                                 <Grid>
@@ -368,17 +410,17 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Create:" Foreground="#9CA3AF" FontSize="9"
-                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="Create:" Foreground="#9CA3AF" FontSize="9" VerticalAlignment="Center"/>
                                     <TextBox x:Name="NewPresetName" Grid.Column="1" Margin="4,0"
-                                             Background="#12122A" Foreground="#F0F0F5"
-                                             BorderBrush="#2D2D4A" BorderThickness="1"
+                                             Background="#14142B" Foreground="#F0F0F5"
+                                             BorderBrush="#22224A" BorderThickness="1"
                                              Padding="4,0" Height="22" FontSize="10"
                                              VerticalContentAlignment="Center"
-                                             CaretBrush="#7C3AED"/>
+                                             CaretBrush="#8B5CF6"/>
                                     <Button Grid.Column="2" Content="Save" Width="44" Height="22"
                                             Background="#7C3AED" Foreground="#FFFFFF"
-                                            BorderThickness="0" FontSize="9" FontWeight="Bold"
+                                            BorderThickness="0" BorderBrush="Transparent"
+                                            FontSize="9" FontWeight="Bold"
                                             Cursor="Hand" Click="SavePreset_Click"
                                             ToolTip="Save current CPS &amp; CDC as a preset"/>
                                 </Grid>
@@ -388,6 +430,7 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- ─── Mouse & Activation ─── -->
                     <Border Style="{StaticResource Card}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -417,25 +460,27 @@
                         </Grid>
                     </Border>
 
+                    <!-- ─── Hotkeys ─── -->
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
                             <TextBlock Text="HOTKEYS" Style="{StaticResource SectionLabel}"/>
                             <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                 <TextBlock Text="Toggle:" Foreground="#9CA3AF" FontSize="12" VerticalAlignment="Center"/>
-                                <Button x:Name="StartKeyBtn" Content="F6" Style="{StaticResource KeybindButton}" 
+                                <Button x:Name="StartKeyBtn" Content="F6" Style="{StaticResource BtnSecondary}" 
                                         Margin="8,0,0,0" Width="80" Click="StartKeyBtn_Click"/>
                             </StackPanel>
                             <TextBlock x:Name="KeybindHint" Text="" Foreground="#EC4899" FontSize="11" Margin="0,6,0,0"/>
                         </StackPanel>
                     </Border>
 
+                    <!-- ─── Status ─── -->
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border CornerRadius="20" Padding="14,6" Background="#1F2937">
+                        <Border CornerRadius="20" Padding="14,6" Background="#1A1A38">
                             <StackPanel Orientation="Horizontal">
                                 <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="#EF4444" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="StatusLabel" Text="STOPPED" Foreground="#EF4444" 
@@ -443,11 +488,7 @@
                             </StackPanel>
                         </Border>
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <Button x:Name="ResetStatsBtn" Content="Reset Stats" 
-                                    Background="#1F2937" Foreground="#9CA3AF"
-                                    Padding="14,6" Cursor="Hand" FontSize="11" Margin="0,0,8,0"
-                                    BorderBrush="#2D2D4A" BorderThickness="1"
-                                    Click="ResetStatsBtn_Click"/>
+                            <Button x:Name="ResetStatsBtn" Content="Reset Stats" Style="{StaticResource BtnSecondary}" Margin="0,0,8,0"/>
                             <Button Content="About" Background="Transparent" Foreground="#6B7280"
                                     BorderThickness="0" Padding="14,6" Cursor="Hand" FontSize="11"
                                     Click="AboutBtn_Click"/>
@@ -458,8 +499,8 @@
             </ScrollViewer>
 
             <Border Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Width="12" Height="12" Margin="0,0,2,2" IsHitTestVisible="False">
-                <TextBlock Text="◢" Foreground="#2D2D4A" FontSize="10" />
+                    Width="12" Height="12" Margin="0,0,4,4" IsHitTestVisible="False">
+                <TextBlock Text="◢" Foreground="#22224A" FontSize="10"/>
             </Border>
         </Grid>
     </Border>
