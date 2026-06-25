@@ -51,6 +51,24 @@
             <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
 
+        <!-- ─── Slider Thumb ─── -->
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Width="18" Height="18" CornerRadius="9"
+                                Background="{StaticResource AccentGradient}"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Effect="{StaticResource ActiveGlow}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- ─── Custom Slider ─── -->
         <Style x:Key="SliderCustom" TargetType="Slider">
             <Setter Property="Minimum" Value="1"/>
@@ -62,7 +80,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
                         <Grid>
-                            <Track x:Name="PART_Track" Grid.Row="0">
+                            <Track x:Name="PART_Track">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Command="Slider.DecreaseLarge" Background="Transparent">
                                         <RepeatButton.Template>
@@ -82,11 +100,7 @@
                                     </RepeatButton>
                                 </Track.IncreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Border Width="18" Height="18" CornerRadius="9"
-                                            Background="{StaticResource AccentGradient}"
-                                            BorderThickness="0"
-                                            Cursor="Hand"
-                                            Effect="{StaticResource ActiveGlow}"/>
+                                    <Thumb Style="{StaticResource SliderThumb}"/>
                                 </Track.Thumb>
                             </Track>
                         </Grid>
