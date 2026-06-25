@@ -1,4 +1,5 @@
 using BlexAutoClicker.Services;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -60,6 +61,39 @@ namespace BlexAutoClicker
         public MainWindow()
         {
             InitializeComponent();
+
+            // Handle --apply-update: new exe replaces the old one after old process exits
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--apply-update" && i + 2 < args.Length)
+                {
+                    string targetExe = args[i + 1];
+                    int oldPid = int.Parse(args[i + 2]);
+                    string ourPath = Environment.ProcessPath ?? "";
+
+                    // Retry copy until old process releases the file
+                    for (int retry = 0; retry < 60; retry++)
+                    {
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(ourPath) && File.Exists(ourPath))
+                            {
+                                File.Copy(ourPath, targetExe, true);
+                                Process.Start(new ProcessStartInfo { FileName = targetExe, UseShellExecute = true });
+                            }
+                            break;
+                        }
+                        catch
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                    }
+
+                    Environment.Exit(0);
+                }
+            }
+
             Loaded += OnLoaded;
             Closed += OnClosed;
         }

@@ -89,50 +89,16 @@ namespace BlexAutoClicker.Services
                     return;
                 }
 
-                string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BlexAuto.exe");
-                string currentDir = Path.GetDirectoryName(currentExe) ?? ".";
-                string oldName = "BlexAuto.old.exe";
-                string newName = "BlexAuto.new.exe";
-                string oldExe = Path.Combine(currentDir, oldName);
-                string newLocalExe = Path.Combine(currentDir, newName);
-                string logFile = Path.Combine(currentDir, "update.log");
-                string updaterPath = Path.Combine(currentDir, "updater.bat");
-
-                // Copy downloaded exe next to current exe
-                File.Copy(newExePath, newLocalExe, true);
-
-                // Write a minimal bat file — no logging/redirects that could interfere
-                File.WriteAllText(updaterPath,
-                    $"@echo off\r\n" +
-                    $"ping -n 3 127.0.0.1 > nul\r\n" +
-                    $":: remove stale .old from prior failed updates\r\n" +
-                    $"if exist \"{oldExe}\" del \"{oldExe}\"\r\n" +
-                    $":: rename running exe -> .old (frees the original name)\r\n" +
-                    $"ren \"{currentExe}\" \"{oldName}\"\r\n" +
-                    $":: if rename failed, wait and retry once\r\n" +
-                    $"if exist \"{currentExe}\" (\r\n" +
-                    $"    ping -n 3 127.0.0.1 > nul\r\n" +
-                    $"    if exist \"{oldExe}\" del \"{oldExe}\"\r\n" +
-                    $"    ren \"{currentExe}\" \"{oldName}\"\r\n" +
-                    $")\r\n" +
-                    $":: rename .new to original name\r\n" +
-                    $"ren \"{newLocalExe}\" \"BlexAuto.exe\"\r\n" +
-                    $":: start new version\r\n" +
-                    $"start \"\" \"{currentExe}\"\r\n" +
-                    $":: clean up .old\r\n" +
-                    $":wait\r\n" +
-                    $"ping -n 2 127.0.0.1 > nul\r\n" +
-                    $"del \"{oldExe}\" > nul 2>&1\r\n" +
-                    $"if exist \"{oldExe}\" goto wait\r\n" +
-                    $"del \"%~f0\"\r\n");
-
-                var psi = new ProcessStartInfo
+                // Start the NEW exe with the old exe path + old PID
+                // The new exe will wait for this process to exit, then copy itself over the old exe
+                string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                int currentPid = Environment.ProcessId;
+                Process.Start(new ProcessStartInfo
                 {
-                    FileName = updaterPath,
-                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = newExePath,
+                    Arguments = $"--apply-update \"{currentExe}\" {currentPid}",
                     UseShellExecute = true
-                };
-                Process.Start(psi);
+                });
                 Application.Current.Shutdown();
             }
             catch (Exception ex)
