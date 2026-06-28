@@ -83,7 +83,7 @@ namespace BlexAutoClicker.Services
                 if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
                 Directory.CreateDirectory(tempDir);
 
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(180));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(600));
                 string newExePath = Path.Combine(tempDir, "BlexAuto.exe");
                 var resp = await _http.GetAsync(downloadUrl, cts.Token);
                 resp.EnsureSuccessStatusCode();
