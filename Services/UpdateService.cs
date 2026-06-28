@@ -12,7 +12,8 @@ namespace BlexAutoClicker.Services
     {
         private static readonly string RepoOwner = "blexifyz";
         private static readonly string RepoName = "BlexAuto";
-        private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(120) };
+        private static readonly HttpClient _http = new();
+        private static readonly HttpClient _apiHttp = new() { Timeout = TimeSpan.FromSeconds(10) };
 
         public async void CheckForUpdate()
         {
@@ -25,7 +26,12 @@ namespace BlexAutoClicker.Services
                 string url = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
                 var req = new HttpRequestMessage(HttpMethod.Get, url);
                 req.Headers.UserAgent.ParseAdd("BlexAuto-updater/1.0");
-                var resp = await _http.SendAsync(req);
+                var resp = await _apiHttp.SendAsync(req);
+                if (resp.StatusCode == System.Net.HttpStatusCode.Forbidden || resp.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    MessageBox.Show("GitHub API rate limit reached. Try again later.", "Update Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
                 resp.EnsureSuccessStatusCode();
                 var json = await resp.Content.ReadAsStringAsync();
                 var release = JsonSerializer.Deserialize<GitHubRelease>(json);
@@ -77,11 +83,12 @@ namespace BlexAutoClicker.Services
                 if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
                 Directory.CreateDirectory(tempDir);
 
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(180));
                 string newExePath = Path.Combine(tempDir, "BlexAuto.exe");
-                var resp = await _http.GetAsync(downloadUrl);
+                var resp = await _http.GetAsync(downloadUrl, cts.Token);
                 resp.EnsureSuccessStatusCode();
                 using (var fs = new FileStream(newExePath, FileMode.Create, FileAccess.Write, FileShare.None))
-                    await resp.Content.CopyToAsync(fs);
+                    await resp.Content.CopyToAsync(fs, cts.Token);
 
                 if (!File.Exists(newExePath))
                 {
