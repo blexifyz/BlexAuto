@@ -71,23 +71,31 @@ namespace BlexAutoClicker
                 if (args[i] == "--apply-update" && i + 2 < args.Length)
                 {
                     string targetExe = args[i + 1];
-                    int oldPid = int.Parse(args[i + 2]);
                     string ourPath = Environment.ProcessPath ?? "";
+
+                    if (string.IsNullOrEmpty(targetExe) || string.IsNullOrEmpty(ourPath) || !File.Exists(ourPath))
+                    {
+                        try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] Update: bad args targetExe='{targetExe}' ourPath='{ourPath}'\n"); } catch { }
+                        Environment.Exit(1);
+                        return;
+                    }
 
                     // Retry copy until old process releases the file
                     for (int retry = 0; retry < 60; retry++)
                     {
                         try
                         {
-                            if (!string.IsNullOrEmpty(ourPath) && File.Exists(ourPath))
+                            File.Copy(ourPath, targetExe, true);
+                            var updated = Process.Start(new ProcessStartInfo { FileName = targetExe, UseShellExecute = true });
+                            if (updated == null)
                             {
-                                File.Copy(ourPath, targetExe, true);
-                                Process.Start(new ProcessStartInfo { FileName = targetExe, UseShellExecute = true });
+                                try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] Update: failed to start {targetExe}\n"); } catch { }
                             }
                             break;
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            try { File.AppendAllText(AppDir + "\\crash.log", $"[{DateTime.Now}] Update: retry {retry}: {ex.Message}\n"); } catch { }
                             System.Threading.Thread.Sleep(1000);
                         }
                     }

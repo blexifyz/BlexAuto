@@ -91,14 +91,24 @@ namespace BlexAutoClicker.Services
 
                 // Start the NEW exe with the old exe path + old PID
                 // The new exe will wait for this process to exit, then copy itself over the old exe
-                string currentExe = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                string currentExe = Environment.ProcessPath ?? "";
+                if (string.IsNullOrEmpty(currentExe))
+                {
+                    MessageBox.Show("Cannot determine current exe path.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 int currentPid = Environment.ProcessId;
-                Process.Start(new ProcessStartInfo
+                var proc = Process.Start(new ProcessStartInfo
                 {
                     FileName = newExePath,
                     Arguments = $"--apply-update \"{currentExe}\" {currentPid}",
                     UseShellExecute = true
                 });
+                if (proc == null)
+                {
+                    MessageBox.Show("Update process failed to start. The download may have been blocked by antivirus or SmartScreen.\n\nTry downloading manually from the releases page.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
                 Application.Current.Shutdown();
             }
             catch (Exception ex)
